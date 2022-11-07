@@ -142,15 +142,15 @@ class Swimming(Training):
 
 def read_package(workout_type: str, data: list) -> Training:
     """Прочитать данные полученные от датчиков."""
-    myDict: dict[str, Training] = {'RUN': Running,
-                                   'WLK': SportsWalking,
-                                   'SWM': Swimming}
+    myDict = {'RUN': Running,
+              'WLK': SportsWalking,
+              'SWM': Swimming}
     if workout_type == 'RUN':
         training: Training = myDict[workout_type](*data)
     elif workout_type == 'WLK':
-        training: Training = myDict[workout_type](*data)
+        training = myDict[workout_type](*data)
     elif workout_type == 'SWM':
-        training: Training = myDict[workout_type](*data)
+        training = myDict[workout_type](*data)
     else:
         print('Класс! Все сломал...')
     return training
