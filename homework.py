@@ -65,6 +65,7 @@ class Running(Training):
 
     CALORIES_MEAN_SPEED_MULTIPLIER: int = 18
     CALORIES_MEAN_SPEED_SHIFT: float = 1.79
+    """Мультипликаторы"""
 
     def get_spent_calories(self) -> float:
         return ((self.CALORIES_MEAN_SPEED_MULTIPLIER
@@ -82,6 +83,7 @@ class SportsWalking(Training):
     CALORIES_SPEED_HEIGHT_MULTIPLIER: float = 0.029
     KMH_IN_MSEC: float = 0.278
     CM_IN_M: int = 100
+    """Мультипликаторы и переменные"""
 
     def __init__(self,
                  action: int,
@@ -114,6 +116,7 @@ class Swimming(Training):
     LEN_STEP: float = 1.38
     CALORIES_MEAN_SPEED_SHIFT: float = 1.1
     CALORIES_WEIGHT_MULTIPLIER: int = 2
+    """Мультипликаторы"""
 
     def __init__(self, action: int,
                  duration: float,
