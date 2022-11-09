@@ -1,17 +1,16 @@
+from dataclasses import dataclass
+from typing import Type, Union
+
+
+@dataclass
 class InfoMessage:
     """Информационное сообщение о тренировке."""
 
-    def __init__(self,
-                 training_type: str,
-                 duration: float,
-                 distance: float,
-                 speed: float,
-                 calories: float):
-        self.training_type = training_type
-        self.duration = duration
-        self.distance = distance
-        self.speed = speed
-        self.calories = calories
+    training_type: str
+    duration: float
+    distance: float
+    speed: float
+    calories: float
 
     def get_message(self) -> str:
         return (f'Тип тренировки: {self.training_type}; '
@@ -98,7 +97,7 @@ class SportsWalking(Training):
         return super().get_distance()
 
     def get_spent_calories(self) -> float:
-        speed = self.get_mean_speed() * self.KMH_IN_MSEC
+        speed: float = self.get_mean_speed() * self.KMH_IN_MSEC
         return ((self.CALORIES_WEIGHT_MULTIPLIER * self.weight
                 + (speed**2 / (self.height / self.CM_IN_M))
                 * self.CALORIES_SPEED_HEIGHT_MULTIPLIER * self.weight)
@@ -138,19 +137,14 @@ class Swimming(Training):
                 * self.duration)
 
 
-def read_package(workout_type: str, data: list) -> Training:
+def read_package(workout_type: str, data: list[int]) -> Training:
     """Прочитать данные полученные от датчиков."""
-    myDict = {'RUN': Running,
-              'WLK': SportsWalking,
-              'SWM': Swimming}
-    if workout_type == 'RUN':
-        training: Training = myDict[workout_type](*data)
-    elif workout_type == 'WLK':
-        training = myDict[workout_type](*data)
-    elif workout_type == 'SWM':
-        training = myDict[workout_type](*data)
-    else:
-        print('Класс! Все сломал...')
+    my_dict: dict[str, Type[Union[Swimming, Running, SportsWalking]]] = {
+        'RUN': Running,
+        'WLK': SportsWalking,
+        'SWM': Swimming
+    }
+    training: Training = my_dict[workout_type](*data)
     return training
 
 
