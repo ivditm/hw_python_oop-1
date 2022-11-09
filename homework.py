@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Type, Union
+from typing import Union
 
 
 @dataclass
@@ -139,7 +139,7 @@ class Swimming(Training):
 
 def read_package(workout_type: str, data: list[int]) -> Training:
     """Прочитать данные полученные от датчиков."""
-    my_dict: dict[str, Type[Union[Swimming, Running, SportsWalking]]] = {
+    my_dict: dict[str, type[Union[Swimming, Running, SportsWalking]]] = {
         'RUN': Running,
         'WLK': SportsWalking,
         'SWM': Swimming
