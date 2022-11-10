@@ -1,5 +1,5 @@
-from dataclasses import dataclass
-from typing import Type, Union, List
+from dataclasses import dataclass, asdict
+from typing import Type, List
 
 
 @dataclass
@@ -11,13 +11,14 @@ class InfoMessage:
     distance: float
     speed: float
     calories: float
+    message = ('Тип тренировки: {training_type}; '
+               'Длительность:{duration: 0.3f} ч.; '
+               'Дистанция:{distance: 0.3f} км; '
+               'Ср. скорость:{speed: 0.3f} км/ч; '
+               'Потрачено ккал:{calories: 0.3f}.')
 
     def get_message(self) -> str:
-        return (f'Тип тренировки: {self.training_type}; '
-                f'Длительность: {"%.3f" % self.duration} ч.; '
-                f'Дистанция: {"%.3f" % self.distance} км; '
-                f'Ср. скорость: {"%.3f" % self.speed} км/ч; '
-                f'Потрачено ккал: {"%.3f" % self.calories}.')
+        return self.message.format(**asdict(self))
 
 
 class Training:
@@ -70,9 +71,6 @@ class Running(Training):
                  * self.get_mean_speed() + self.CALORIES_MEAN_SPEED_SHIFT)
                 * self.weight / self.M_IN_KM * self.duration * self.MIN_IN_H)
 
-    def get_distance(self) -> float:
-        return super().get_distance()
-
 
 class SportsWalking(Training):
     """Тренировка: спортивная ходьба."""
@@ -90,21 +88,12 @@ class SportsWalking(Training):
         super().__init__(action, duration, weight)
         self.height: float = height
 
-    def get_mean_speed(self) -> float:
-        return super().get_mean_speed()
-
-    def get_distance(self) -> float:
-        return super().get_distance()
-
     def get_spent_calories(self) -> float:
         speed: float = self.get_mean_speed() * self.KMH_IN_MSEC
         return ((self.CALORIES_WEIGHT_MULTIPLIER * self.weight
                 + (speed**2 / (self.height / self.CM_IN_M))
                 * self.CALORIES_SPEED_HEIGHT_MULTIPLIER * self.weight)
                 * self.duration * self.MIN_IN_H)
-
-    def show_training_info(self) -> InfoMessage:
-        return super().show_training_info()
 
 
 class Swimming(Training):
@@ -123,9 +112,6 @@ class Swimming(Training):
         self.lenght_pool = length_pool
         self.count_pool = count_pool
 
-    def get_distance(self) -> float:
-        return super().get_distance()
-
     def get_mean_speed(self) -> float:
         return (self.lenght_pool * self.count_pool / self.M_IN_KM
                 / self.duration)
@@ -139,13 +125,19 @@ class Swimming(Training):
 
 def read_package(workout_type: str, data: List[int]) -> Training:
     """Прочитать данные полученные от датчиков."""
-    my_dict: dict[str, Type[Union[Swimming, Running, SportsWalking]]] = {
+    my_dict: dict[str, Type[Training]] = {
         'RUN': Running,
         'WLK': SportsWalking,
         'SWM': Swimming
     }
-    training: Training = my_dict[workout_type](*data)
-    return training
+    try:
+        training: Training = my_dict[workout_type](*data)
+        return training
+    except KeyError:
+        print('Не занимайся ерундой :-), пойди потрененруй'
+              'плаванье, бег или ходьбу!!!')
+    finally:
+        return training
 
 
 def main(training: Training) -> None:
